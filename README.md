@@ -1,1 +1,1 @@
-# Androgular Server [![Build Status](https://travis-ci.org/Andromeda-Project/androgular-server.svg?branch=master)](https://travis-ci.org/Andromeda-Project/androgular-server)
+# Androgular Server [![Build Status](https://travis-ci.org/Andromeda-Project/androgular-server.svg?branch=master)](https://travis-ci.org/Andromeda-Project/androgular-server) [![Dev Dependencies](https://david-dm.org/Andromeda-Project/androgular-server.svg)]
