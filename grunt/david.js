@@ -4,4 +4,4 @@ module.exports = {
         update: true
       }
     }
-}
+};

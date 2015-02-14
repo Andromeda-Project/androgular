@@ -1,0 +1,93 @@
+{
+    "requireCurlyBraces": [
+        "for",
+        "while",
+        "do",
+        "try",
+        "catch"
+    ],
+    "requireSpaceAfterKeywords": [
+        "if",
+        "else",
+        "for",
+        "while",
+        "do",
+        "switch",
+        "return",
+        "try",
+        "catch"
+    ],
+    "requireParenthesesAroundIIFE": true,
+    "requireSpacesInFunctionExpression": {
+        "beforeOpeningCurlyBrace": true
+    },
+    "disallowEmptyBlocks": true,
+    "disallowSpacesInsideArrayBrackets": true,
+    "disallowSpacesInsideParentheses": true,
+    "disallowSpacesInsideObjectBrackets": true,
+    "disallowQuotedKeysInObjects": "allButReserved",
+    "disallowSpaceAfterObjectKeys": true,
+    "requireCommaBeforeLineBreak": true,
+    "disallowSpaceAfterPrefixUnaryOperators": [
+        "++",
+        "--",
+        "+",
+        "-",
+        "~",
+        "!"
+    ],
+    "disallowSpaceBeforePostfixUnaryOperators": [
+        "++",
+        "--"
+    ],
+    "requireSpaceBeforeBinaryOperators": [
+        "+",
+        "-",
+        "/",
+        "*",
+        "=",
+        "==",
+        "===",
+        "!=",
+        "!=="
+    ],
+    "requireSpaceAfterBinaryOperators": [
+        "+",
+        "-",
+        "/",
+        "*",
+        "=",
+        "==",
+        "===",
+        "!=",
+        "!=="
+    ],
+    "requireCamelCaseOrUpperCaseIdentifiers": true,
+    "disallowKeywords": [
+        "with"
+    ],
+    "disallowMultipleLineStrings": true,
+    "disallowMultipleLineBreaks": true,
+    "validateLineBreaks": "LF",
+    "validateQuoteMarks": "'",
+    "disallowMixedSpacesAndTabs": true,
+    "disallowTrailingWhitespace": true,
+    "disallowKeywordsOnNewLine": [
+        "else"
+    ],
+    "requireLineFeedAtFileEnd": true,
+    "maximumLineLength": 500,
+    "requireCapitalizedConstructors": true,
+    "safeContextKeyword": null,
+    "validateJSDoc": {
+        "checkParamNames": true,
+        "checkRedundantParams": false,
+        "requireParamTypes": true
+    },
+    "excludeFiles": [
+        "node_modules/**",
+        "src/spa/scripts/appDev.js",
+        "src/spa/**/*.test.js",
+        "src/spa/modules/mdxConfig.js"
+    ]
+}
