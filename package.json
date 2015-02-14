@@ -20,7 +20,8 @@
   },
   "homepage": "https://github.com/Andromeda-Project/androgular",
   "dependencies": {
-    "express": "^4.11.2"
+    "express": "^4.11.2",
+    "postgresql": "0.0.1"
   },
   "devDependencies": {
     "grunt": "^0.4.5",
