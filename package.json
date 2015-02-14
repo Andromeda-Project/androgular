@@ -1,0 +1,26 @@
+{
+  "name": "androgular",
+  "version": "0.0.1",
+  "description": "Andromeda Developer Tool",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:Andromeda-Project/androgular.git"
+  },
+  "author": "Donald Organ <dorgan@donaldorgan.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Andromeda-Project/androgular/issues"
+  },
+  "homepage": "https://github.com/Andromeda-Project/androgular",
+  "dependencies": {
+    "express": "^4.11.2"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5"
+  }
+}
