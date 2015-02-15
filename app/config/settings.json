@@ -7,7 +7,7 @@
         "host": "dev.donaldorgan.com",
         "port": "3306",
         "name": "andro",
-        "username": "root",
-        "password": "my-S3cr37_k3y#$"
+        "username": "andro",
+        "password": "AbC123$#@"
     }
 }
