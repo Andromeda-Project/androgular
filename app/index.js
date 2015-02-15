@@ -2,20 +2,17 @@
 
 'use strict';
 
-var fs    = require('fs'),
-    nconf = require('nconf'),
+var nconf = require('nconf'),
     express = require('express'),
     app = express(),
     mysql = require('mysql'),
     bodyParser = require('body-parser'),
     oauthserver = require('node-oauth2-server'),
-    session = require('express-session'),
-    MemoryStore = require('express-session').MemoryStore,
+    //session = require('express-session'),
+    //MemoryStore = require('express-session').MemoryStore,
     serverPort,
-    dbConnectionObject,
     clients = {},
-    grants = {},
-    myOAP;
+    dbConnectionObject;
 
 nconf.argv()
     .env()
@@ -33,7 +30,7 @@ dbConnectionObject = {
 app.dbConnection = mysql.createConnection(dbConnectionObject);
 
 app.use(bodyParser());
-var oAuthModel = require('./oauth/model.js');
+var oAuthModel = require('./oauth/model.js')(app);
 
 console.log(oAuthModel);
 
@@ -58,5 +55,5 @@ app.dbConnection.query('SELECT * FROM accounts', function(err, rows, fields) {
     });
 });
 
-app.dbConnection.end();
+//app.dbConnection.end();
 
