@@ -1,40 +1,62 @@
 /* global require:true, console: true */
-(function() {
+
 'use strict';
 
-    var fs    = require('fs'),
-        nconf = require('nconf'),
-        express = require('express'),
-        app = express(),
-        mysql = require('mysql'),
-        serverPort,
-        dbConnectionObject,
-        connection;
+var fs    = require('fs'),
+    nconf = require('nconf'),
+    express = require('express'),
+    app = express(),
+    mysql = require('mysql'),
+    bodyParser = require('body-parser'),
+    oauthserver = require('node-oauth2-server'),
+    session = require('express-session'),
+    MemoryStore = require('express-session').MemoryStore,
+    serverPort,
+    dbConnectionObject,
+    clients = {},
+    grants = {},
+    myOAP;
 
-    nconf.argv()
-        .env()
-        .file({file: './app/config/settings.json'});
+nconf.argv()
+    .env()
+    .file({file: './app/config/settings.json'});
 
-    serverPort = nconf.get('server:port');
+serverPort = nconf.get('server:port');
 
-    dbConnectionObject = {
-        host: nconf.get('database:host'),
-        user:  nconf.get('database:username'),
-        password: nconf.get('database:password')
-    };
+dbConnectionObject = {
+    host: nconf.get('database:host'),
+    user:  nconf.get('database:username'),
+    password: nconf.get('database:password'),
+    database: nconf.get('database:name')
+};
 
-    connection = mysql.createConnection(dbConnectionObject);
+app.dbConnection = mysql.createConnection(dbConnectionObject);
 
-    // Set server port
-    app.listen(serverPort);
-    console.log('server is running on port: ' + serverPort);
-    connection.connect();
+app.use(bodyParser());
+var oAuthModel = require('./oauth/model.js');
 
-    connection.query('SELECT 1 + 1 AS solution', function(err, rows, fields) {
-      if (err) throw err;
+console.log(oAuthModel);
 
-      console.log('The solution is: ', rows[0].solution);
+app.oauth = oauthserver({
+    model: oAuthModel, // See below for specification
+    grants: ['password'],
+    debug: true
+});
+
+app.all('/authorize', app.oauth.grant());
+
+// Set server port
+app.listen(serverPort);
+console.log('server is running on port: ' + serverPort);
+app.dbConnection.connect();
+
+app.dbConnection.query('SELECT * FROM accounts', function(err, rows, fields) {
+    if (err) throw err;
+
+    rows.forEach(function(row) {
+        clients[row.id] = row.name;
     });
+});
 
-    connection.end();
-}());
+app.dbConnection.end();
+
