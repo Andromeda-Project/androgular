@@ -11,7 +11,7 @@ var nconf = require('nconf'),
     //session = require('express-session'),
     //MemoryStore = require('express-session').MemoryStore,
     serverPort,
-    clients = {},
+    clients = [],
     dbConnectionObject;
 
 nconf.argv()
@@ -29,10 +29,9 @@ dbConnectionObject = {
 
 app.dbConnection = mysql.createConnection(dbConnectionObject);
 
-app.use(bodyParser());
-var oAuthModel = require('./oauth/model.js')(app);
+app.use(bodyParser.urlencoded({ extended: true }));
 
-console.log(oAuthModel);
+var oAuthModel = require('./oauth/model.js')(app, clients);
 
 app.oauth = oauthserver({
     model: oAuthModel, // See below for specification
@@ -40,6 +39,7 @@ app.oauth = oauthserver({
     debug: true
 });
 
+app.use(app.oauth.errorHandler());
 app.all('/authorize', app.oauth.grant());
 
 // Set server port
@@ -47,11 +47,11 @@ app.listen(serverPort);
 console.log('server is running on port: ' + serverPort);
 app.dbConnection.connect();
 
-app.dbConnection.query('SELECT * FROM accounts', function(err, rows, fields) {
+app.dbConnection.query('SELECT * FROM accounts', function(err, rows) {
     if (err) throw err;
 
     rows.forEach(function(row) {
-        clients[row.id] = row.name;
+        clients.push(row.id);
     });
 });
 

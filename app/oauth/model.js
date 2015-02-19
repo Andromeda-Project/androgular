@@ -1,13 +1,18 @@
 'use strict';
 
-module.exports = function (_app) {
+module.exports = function (_app, _clients) {
     var app = _app,
+    model,
+    clients = _clients;
+
     model = {
         getAccessToken: function (bearerToken, callback) {
             app.dbConnection.query(
                 'SELECT access_token, account_id, expires, email FROM auth_tokens WHERE access_token = ?',
                 [bearerToken],
                 function (err, rows) {
+                    console.log(err);
+                    console.log(rows);
                     if (err) {
                         return callback(err);
                     }
@@ -56,9 +61,9 @@ module.exports = function (_app) {
             );
         },
         saveAccessToken: function (accessToken, clientId, expires, userId, callback) {
-            app.dbConection.query(
+            app.dbConnection.query(
                 'INSERT INTO access_tokens(access_token, client_id, user_id, expires) ' +
-                    'VALUES (?, ?, ?, ?)', [accessToken, clientId, userId, expires],
+                    'VALUES (?, ?, ?, ?)', [accessToken, clientId, userId.id, expires],
                 function (err) {
                     callback(err);
                 }
@@ -76,15 +81,20 @@ module.exports = function (_app) {
         },
         getUser: function (username, password, callback) {
             app.dbConnection.query(
-                'SELECT id FROM users WHERE username = ? AND password = ?',
+                'SELECT id FROM users WHERE email = ? AND password = md5(?)',
                 [username, password],
                 function (err, rows) {
-                    callback(err, rows.length > 0 ? rows[0] : false);
+                    console.log('Result', rows);
+                    callback(err, (rows ? rows[0] : false));
                 }
             );
         },
         grantTypeAllowed: function (clientId, grantType, callback) {
-            return true;
+            if (grantType === 'password') {
+                return callback(false, clients.indexOf(clientId.toLowerCase()) >= 0);
+            }
+
+            callback(false, true);
         }
     };
 
