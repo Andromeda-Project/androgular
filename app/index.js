@@ -4,56 +4,61 @@
 
 var nconf = require('nconf'),
     express = require('express'),
+    fs = require('fs'),
     app = express(),
     mysql = require('mysql'),
     bodyParser = require('body-parser'),
-    oauthserver = require('node-oauth2-server'),
     //session = require('express-session'),
     //MemoryStore = require('express-session').MemoryStore,
     serverPort,
     clients = [],
-    dbConnectionObject;
+    anyDB = require('any-db'),
+    dbConnectionConfig,
+    dbConnectionString,
+    env,
+    confFile;
 
-nconf.argv()
-    .env()
-    .file({file: './app/config/settings.json'});
 
-serverPort = nconf.get('server:port');
+nconf.argv().env();
+env = (nconf.get('NODE_ENV') || 'DEV').toLowerCase();
 
-dbConnectionObject = {
-    host: nconf.get('database:host'),
-    user:  nconf.get('database:username'),
-    password: nconf.get('database:password'),
-    database: nconf.get('database:name')
-};
+confFile = './app/config/settings_' + env + '.json';
+fs.exists(confFile, function(exists) {
+    if (!exists) {
+        console.log('Configuration file not found for Environment: ', env);
+        return;
+    }
+    console.log('Current Environment: ', env);
+    nconf.file({file: confFile});
 
-app.dbConnection = mysql.createConnection(dbConnectionObject);
+    serverPort = nconf.get('server:port');
 
-app.use(bodyParser.urlencoded({ extended: true }));
+    dbConnectionConfig = {
+        host: nconf.get('database:host'),
+        user:  nconf.get('database:username'),
+        password: nconf.get('database:password'),
+        database: nconf.get('database:name')
+    };
 
-var oAuthModel = require('./oauth/model.js')(app, clients);
+    dbConnectionString = 'mysql://' + dbConnectionConfig.user + ':' + dbConnectionConfig.password + '@' +
+        dbConnectionConfig.host + '/' + dbConnectionConfig.database;
 
-app.oauth = oauthserver({
-    model: oAuthModel, // See below for specification
-    grants: ['password'],
-    debug: true
-});
+        console.log(dbConnectionString);
+    app.dbConnection = anyDB.createPool(dbConnectionString, {min: 2, max: 10});
 
-app.use(app.oauth.errorHandler());
-app.all('/authorize', app.oauth.grant());
+    app.use(bodyParser.urlencoded({ extended: true }));
 
-// Set server port
-app.listen(serverPort);
-console.log('server is running on port: ' + serverPort);
-app.dbConnection.connect();
+    app.use('/api/*', access());
 
-app.dbConnection.query('SELECT * FROM accounts', function(err, rows) {
-    if (err) throw err;
+    // Set server port
+    app.listen(serverPort);
+    console.log('server is running on port: ' + serverPort);
 
-    rows.forEach(function(row) {
-        clients.push(row.id);
+    app.dbConnection.query('SELECT * FROM accounts', function(err, rows) {
+        if (err) throw err;
+
+        rows.forEach(function(row) {
+            clients.push(row.id);
+        });
     });
 });
-
-//app.dbConnection.end();
-
